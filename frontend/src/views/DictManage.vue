@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="panel-card">
+    <div class="section-title">数据字典</div>
     <el-form :inline="true" :model="query" style="margin-bottom:10px">
       <el-form-item label="类型"><el-input v-model="query.type" placeholder="living_type" /></el-form-item>
       <el-button type="primary" @click="load">查询</el-button>

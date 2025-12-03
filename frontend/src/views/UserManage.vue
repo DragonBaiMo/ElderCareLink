@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <el-form :inline="true" :model="query" class="mb-3">
+  <div class="panel-card">
+    <div class="section-title">用户管理</div>
+    <el-form :inline="true" :model="query" class="search-bar">
       <el-form-item label="角色">
         <el-select v-model="query.role" placeholder="全部角色" style="width:160px">
           <el-option label="全部" value="" />
@@ -13,7 +14,7 @@
       <el-button type="success" @click="openCreate">新增用户</el-button>
     </el-form>
 
-    <el-table :data="list.records" border style="width:100%">
+    <el-table :data="list.records" border style="width:100%" class="table-actions">
       <el-table-column prop="username" label="账号" width="120" />
       <el-table-column prop="realName" label="姓名" />
       <el-table-column prop="phone" label="电话" />

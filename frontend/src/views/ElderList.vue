@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <el-form :inline="true" :model="query" class="mb-3">
+  <div class="panel-card">
+    <div class="section-title">老人信息</div>
+    <el-form :inline="true" :model="query" class="search-bar">
       <el-form-item label="姓名">
         <el-input v-model="query.name" placeholder="输入姓名关键字" />
       </el-form-item>
@@ -30,7 +31,7 @@
       <el-button @click="exportData">导出 Excel</el-button>
     </el-form>
 
-    <el-table :data="table.records" border style="width:100%">
+    <el-table :data="table.records" border style="width:100%" class="table-actions">
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="gender" label="性别" width="80" />
       <el-table-column prop="age" label="年龄" width="80" />
@@ -46,7 +47,12 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination class="mt-3" layout="prev, pager, next" :total="table.total" :page-size="query.size" @current-change="(p)=>{query.page=p;load()}" />
+    <el-pagination
+      class="mt-3"
+      layout="prev, pager, next"
+      :total="table.total"
+      :page-size="query.size"
+      @current-change="(p)=>{query.page=p;load()}" />
 
     <el-dialog v-model="dialog.visible" :title="dialog.form.id ? '编辑老人' : '新增老人'" width="680px">
       <el-form :model="dialog.form" label-width="120px">
@@ -73,20 +79,24 @@
     </el-dialog>
 
     <el-drawer v-model="detailVisible" title="老人详情" size="50%">
-      <div v-if="detail">
-        <p>姓名：{{ detail.elder.name }} | 电话：{{ detail.elder.phone }} | 志愿者：{{ detail.elder.responsibleVolunteerName }}</p>
-        <h4>最近健康记录</h4>
-        <el-timeline>
-          <el-timeline-item v-for="h in detail.recentHealthRecords" :key="h.id" :timestamp="h.recordDate">
-            {{ h.healthDesc || '无描述' }}，血压：{{ h.bloodPressure }}，心率：{{ h.heartRate }}
-          </el-timeline-item>
-        </el-timeline>
-        <h4>最近探访</h4>
-        <el-timeline>
-          <el-timeline-item v-for="v in detail.recentVisitRecords" :key="v.id" :timestamp="v.visitTime">
-            {{ v.serviceContent }}（{{ v.elderStatus }}）
-          </el-timeline-item>
-        </el-timeline>
+      <div v-if="detail" class="detail-body">
+        <p class="detail-row">姓名：{{ detail.elder.name }} ｜ 电话：{{ detail.elder.phone }} ｜ 志愿者：{{ detail.elder.responsibleVolunteerName }}</p>
+        <div class="detail-block">
+          <h4>最近健康记录</h4>
+          <el-timeline>
+            <el-timeline-item v-for="h in detail.recentHealthRecords" :key="h.id" :timestamp="h.recordDate">
+              {{ h.healthDesc || '无描述' }}，血压：{{ h.bloodPressure }}，心率：{{ h.heartRate }}
+            </el-timeline-item>
+          </el-timeline>
+        </div>
+        <div class="detail-block">
+          <h4>最近探访</h4>
+          <el-timeline>
+            <el-timeline-item v-for="v in detail.recentVisitRecords" :key="v.id" :timestamp="v.visitTime">
+              {{ v.serviceContent }}（{{ v.elderStatus }}）
+            </el-timeline-item>
+          </el-timeline>
+        </div>
       </div>
     </el-drawer>
   </div>
@@ -119,7 +129,8 @@ const loadVolunteers = async () => {
 }
 
 const load = async () => {
-  const res = await api.get('/elders', { params: { page: query.page - 1, size: query.size, ...query } })
+  const params = { ...query, page: query.page - 1 }
+  const res = await api.get('/elders', { params })
   if (res.code === 0) {
     table.records = res.data.content
     table.total = res.data.totalElements
@@ -181,3 +192,18 @@ onMounted(() => {
   load()
 })
 </script>
+
+<style scoped>
+.detail-body {
+  padding: 6px 2px;
+}
+
+.detail-row {
+  margin: 0 0 12px 0;
+  color: #4a5568;
+}
+
+.detail-block {
+  margin-top: 12px;
+}
+</style>

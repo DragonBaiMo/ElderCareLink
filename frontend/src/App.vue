@@ -1,13 +1,14 @@
 <template>
-  <router-view />
+  <div class="app-shell">
+    <router-view />
+  </div>
 </template>
 
 <script setup>
 </script>
 
-<style>
-body {
-  margin: 0;
-  font-family: "Microsoft Yahei", sans-serif;
+<style scoped>
+.app-shell {
+  min-height: 100vh;
 }
 </style>

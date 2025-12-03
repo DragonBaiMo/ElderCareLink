@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <el-form :inline="true" :model="query" class="mb-3">
+  <div class="panel-card">
+    <div class="section-title">公告管理</div>
+    <el-form :inline="true" :model="query" class="search-bar">
       <el-form-item label="状态">
         <el-select v-model="query.status" placeholder="全部" clearable>
           <el-option label="草稿" value="DRAFT" />

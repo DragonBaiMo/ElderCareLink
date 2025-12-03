@@ -11,9 +11,8 @@
 
 ## 快速启动
 1. 创建数据库并导入建表脚本：
-   ```sql
-   source schema.sql;
-   ```
+   - 手动方式：进入 MySQL 控制台执行 `source schema.sql;`
+   - Windows 一键：运行 `scripts/init_db.bat`（可通过环境变量 `MYSQL_HOST`/`MYSQL_PORT`/`MYSQL_USER`/`MYSQL_PASSWORD` 覆盖默认 root/root）
 2. 启动后端：
    ```bash
    cd backend

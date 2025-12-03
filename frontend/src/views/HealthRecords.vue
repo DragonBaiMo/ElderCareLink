@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <el-form :inline="true" :model="query" class="mb-3">
+  <div class="panel-card">
+    <div class="section-title">健康记录</div>
+    <el-form :inline="true" :model="query" class="search-bar">
       <el-form-item label="选择老人">
         <el-select v-model="query.elderId" filterable placeholder="请选择老人" style="width:200px">
           <el-option v-for="e in elders" :key="e.id" :label="e.name" :value="e.id" />

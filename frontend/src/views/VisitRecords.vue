@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <el-form :inline="true" :model="query" class="mb-3">
+  <div class="panel-card">
+    <div class="section-title">探访记录</div>
+    <el-form :inline="true" :model="query" class="search-bar">
       <el-form-item label="志愿者">
         <el-select v-model="query.volunteerId" clearable placeholder="全部" style="width:180px">
           <el-option v-for="v in volunteers" :key="v.id" :label="v.realName" :value="v.id" />
