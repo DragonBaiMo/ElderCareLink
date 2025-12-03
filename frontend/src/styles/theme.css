@@ -1,0 +1,62 @@
+:root {
+  --bg-gradient: linear-gradient(135deg, #0f4c75 0%, #1b262c 50%, #3282b8 100%);
+  --card-radius: 12px;
+  --panel-padding: 16px 18px;
+  --text-color: #1f2d3d;
+}
+
+body {
+  margin: 0;
+  font-family: "Microsoft Yahei", "PingFang SC", sans-serif;
+  background: #f5f7fb;
+  color: var(--text-color);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-shell {
+  min-height: 100vh;
+  background-image: var(--bg-gradient);
+}
+
+.main-panel {
+  padding: 18px;
+  background: #f7f9fc;
+  min-height: calc(100vh - 64px);
+}
+
+.panel-card {
+  border-radius: var(--card-radius);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  background: #fff;
+  padding: var(--panel-padding);
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-title::before {
+  content: '';
+  width: 6px;
+  height: 18px;
+  background: linear-gradient(180deg, #3a7bd5, #3a6073);
+  border-radius: 4px;
+}
+
+.table-actions .el-button + .el-button {
+  margin-left: 4px;
+}
+
+.search-bar .el-form-item {
+  margin-right: 12px;
+}
