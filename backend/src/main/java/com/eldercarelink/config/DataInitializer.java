@@ -4,8 +4,10 @@ import com.eldercarelink.entity.*;
 import com.eldercarelink.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -22,13 +24,20 @@ public class DataInitializer implements CommandLineRunner {
     private final HealthRecordRepository healthRecordRepository;
     private final VisitRecordRepository visitRecordRepository;
     private final VolunteerProfileRepository volunteerProfileRepository;
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
+
+    /**
+     * 由 scripts/generate_secrets.py 生成的默认密码哈希，保证凭据可追溯。
+     */
+    @Value("${security.default-password-hash:}")
+    private String defaultPasswordHash;
 
     @Override
     public void run(String... args) {
         if (userRepository.count() == 0) {
-            User admin = new User(null, "admin", encoder.encode("123456"), "管理员", "13800000000", "ADMIN", "NORMAL", LocalDateTime.now());
-            User volunteer = new User(null, "vol01", encoder.encode("123456"), "志愿者一号", "13900000000", "VOLUNTEER", "NORMAL", LocalDateTime.now());
+            String encodedPassword = resolveDefaultPassword();
+            User admin = new User(null, "admin", encodedPassword, "管理员", "13800000000", "ADMIN", "NORMAL", LocalDateTime.now());
+            User volunteer = new User(null, "vol01", encodedPassword, "志愿者一号", "13900000000", "VOLUNTEER", "NORMAL", LocalDateTime.now());
             userRepository.saveAll(Arrays.asList(admin, volunteer));
             VolunteerProfile profile = new VolunteerProfile();
             profile.setUserId(volunteer.getId());
@@ -92,5 +101,13 @@ public class DataInitializer implements CommandLineRunner {
         entry.setDictValue(value);
         entry.setSort(sort);
         return entry;
+    }
+
+    private String resolveDefaultPassword() {
+        if (StringUtils.hasText(defaultPasswordHash)) {
+            return defaultPasswordHash;
+        }
+        // 兜底逻辑：若未配置哈希则重新编码固定口令，保证初始化可用
+        return passwordEncoder.encode("123456");
     }
 }

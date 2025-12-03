@@ -10,21 +10,27 @@
 - MySQL 5.7/8.0（数据库名 eldercare，账号/密码 root/root 可按需调整）
 
 ## 快速启动
-1. 创建数据库并导入建表脚本：
+1. 生成登录口令哈希与 JWT 秘钥（可复用已生成的 `scripts/generated_secrets.json`）：
+   ```bash
+   pip install bcrypt
+   python scripts/generate_secrets.py
+   ```
+   本仓库已将首次生成的 `jwt_secret` 与 `bcrypt_hash` 写入 `backend/src/main/resources/application.yml`，如需重新生成请再次运行脚本并将输出覆盖配置文件。
+2. 创建数据库并导入建表脚本：
    - 手动方式：进入 MySQL 控制台执行 `source schema.sql;`
    - Windows 一键：运行 `scripts/init_db.bat`（可通过环境变量 `MYSQL_HOST`/`MYSQL_PORT`/`MYSQL_USER`/`MYSQL_PASSWORD` 覆盖默认 root/root）
-2. 启动后端：
+3. 启动后端：
    ```bash
    cd backend
    mvn spring-boot:run
    ```
-3. 启动前端：
+4. 启动前端：
    ```bash
    cd frontend
    npm install
    npm run dev
    ```
-4. 浏览器访问 `http://localhost:5173`，使用演示账号登录：
+5. 浏览器访问 `http://localhost:5173`，使用演示账号登录：
    - 管理员：admin / 123456
    - 志愿者：vol01 / 123456
 
