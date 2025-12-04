@@ -6,16 +6,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.util.List;
 
 /**
  * 精简版安全配置，仅对登录外的接口进行 Token 校验。
@@ -41,7 +36,10 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager() {
-        // 这里使用自定义逻辑校验，不依赖 Spring Security 认证链。
-        return new ProviderManager(List.of());
+        // 仅为满足 Spring Security 依赖注入需求，实际认证由自定义逻辑完成。
+        return authentication -> {
+            authentication.setAuthenticated(true);
+            return authentication;
+        };
     }
 }

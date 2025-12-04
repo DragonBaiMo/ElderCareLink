@@ -1,6 +1,7 @@
 package com.eldercarelink.controller;
 
 import com.eldercarelink.common.ApiResponse;
+import com.eldercarelink.entity.VisitRecord;
 import com.eldercarelink.repository.ElderRepository;
 import com.eldercarelink.repository.HealthRecordRepository;
 import com.eldercarelink.repository.UserRepository;

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
 const instance = axios.create({
   baseURL: '/api'
@@ -16,7 +17,7 @@ instance.interceptors.response.use(
   (res) => res.data,
   (error) => {
     const msg = error.response?.data?.message || '请求失败'
-    window.ElMessage && window.ElMessage.error(msg)
+    ElMessage.error(msg)
     return Promise.reject(error)
   }
 )

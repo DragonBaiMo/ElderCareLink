@@ -36,8 +36,22 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         if (userRepository.count() == 0) {
             String encodedPassword = resolveDefaultPassword();
-            User admin = new User(null, "admin", encodedPassword, "管理员", "13800000000", "ADMIN", "NORMAL", LocalDateTime.now());
-            User volunteer = new User(null, "vol01", encodedPassword, "志愿者一号", "13900000000", "VOLUNTEER", "NORMAL", LocalDateTime.now());
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setPassword(encodedPassword);
+            admin.setRealName("管理员");
+            admin.setPhone("13800000000");
+            admin.setRole("ADMIN");
+            admin.setStatus("NORMAL");
+            admin.setCreateTime(LocalDateTime.now());
+            User volunteer = new User();
+            volunteer.setUsername("vol01");
+            volunteer.setPassword(encodedPassword);
+            volunteer.setRealName("志愿者一号");
+            volunteer.setPhone("13900000000");
+            volunteer.setRole("VOLUNTEER");
+            volunteer.setStatus("NORMAL");
+            volunteer.setCreateTime(LocalDateTime.now());
             userRepository.saveAll(Arrays.asList(admin, volunteer));
             VolunteerProfile profile = new VolunteerProfile();
             profile.setUserId(volunteer.getId());

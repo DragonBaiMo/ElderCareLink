@@ -22,6 +22,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -65,14 +66,15 @@ public class ElderServiceImpl implements ElderService {
 
     @Override
     public Page<Elder> list(String name, String livingType, String healthLevel, String status, Long volunteerId, Pageable pageable) {
+        String statusFilter = StringUtils.hasText(status) ? status : "ACTIVE";
         if (volunteerId != null) {
-            return elderRepository.findByResponsibleVolunteerId(volunteerId, pageable);
+            return elderRepository.findByResponsibleVolunteerIdAndStatusContaining(volunteerId, statusFilter, pageable);
         }
         return elderRepository.findByNameContainingAndLivingTypeContainingAndHealthLevelContainingAndStatusContaining(
                 Optional.ofNullable(name).orElse(""),
                 Optional.ofNullable(livingType).orElse(""),
                 Optional.ofNullable(healthLevel).orElse(""),
-                Optional.ofNullable(status).orElse(""),
+                statusFilter,
                 pageable
         );
     }
@@ -104,7 +106,7 @@ public class ElderServiceImpl implements ElderService {
             Row row = sheet.createRow(rowIndex++);
             row.createCell(0).setCellValue(safeString(elder.getName()));
             row.createCell(1).setCellValue(safeString(elder.getGender()));
-            row.createCell(2).setCellValue(elder.getAge() == null ? "" : elder.getAge());
+            row.createCell(2).setCellValue(safeString(elder.getAge()));
             row.createCell(3).setCellValue(safeString(elder.getLivingType()));
             row.createCell(4).setCellValue(safeString(elder.getHealthLevel()));
             row.createCell(5).setCellValue(safeString(elder.getPhone()));

@@ -1,48 +1,77 @@
 <template>
-  <div class="panel-card">
-    <div class="section-title">公告管理</div>
-    <el-form :inline="true" :model="query" class="search-bar">
-      <el-form-item label="状态">
-        <el-select v-model="query.status" placeholder="全部" clearable>
-          <el-option label="草稿" value="DRAFT" />
-          <el-option label="已发布" value="PUBLISHED" />
-          <el-option label="下架" value="DISABLED" />
-        </el-select>
-      </el-form-item>
-      <el-button type="primary" @click="load">筛选</el-button>
-      <el-button type="success" @click="openDialog()" style="margin-bottom:10px">发布公告</el-button>
-    </el-form>
+  <div class="page-container">
+    <div class="page-header">
+      <h2 class="page-title">公告管理</h2>
+      <el-button type="primary" icon="Plus" @click="openDialog()">发布公告</el-button>
+    </div>
+    
+    <div class="filter-container">
+       <el-radio-group v-model="query.status" @change="load">
+          <el-radio-button label="">全部状态</el-radio-button>
+          <el-radio-button label="PUBLISHED">已发布</el-radio-button>
+          <el-radio-button label="DRAFT">草稿</el-radio-button>
+       </el-radio-group>
+    </div>
 
-    <el-table :data="list.records" border>
-      <el-table-column prop="title" label="标题" />
-      <el-table-column prop="type" label="类型" width="120" />
-      <el-table-column prop="status" label="状态" width="120" />
-      <el-table-column prop="publishTime" label="发布时间" width="180" />
-      <el-table-column label="操作" width="240">
-        <template #default="scope">
-          <el-button link type="primary" @click="view(scope.row)">查看</el-button>
-          <el-button link type="primary" @click="openDialog(scope.row)">编辑</el-button>
-          <el-button link type="danger" @click="remove(scope.row.id)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="pro-card no-padding">
+      <el-table :data="list.records" style="width: 100%">
+        <el-table-column prop="title" label="标题" show-overflow-tooltip>
+           <template #default="scope">
+              <span style="font-weight: 500">{{ scope.row.title }}</span>
+           </template>
+        </el-table-column>
+        <el-table-column prop="type" label="类型" width="120">
+           <template #default="scope">
+              <el-tag effect="light">{{ scope.row.type }}</el-tag>
+           </template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态" width="100">
+           <template #default="scope">
+              <el-badge is-dot :type="scope.row.status === 'PUBLISHED' ? 'success' : 'warning'" style="margin-right: 6px; vertical-align: middle;" />
+              {{ scope.row.status === 'PUBLISHED' ? '已发布' : '草稿' }}
+           </template>
+        </el-table-column>
+        <el-table-column prop="publishTime" label="发布时间" width="180" />
+        <el-table-column label="操作" width="200">
+          <template #default="scope">
+             <el-button link type="primary" @click="view(scope.row)">预览</el-button>
+             <el-button link type="primary" @click="openDialog(scope.row)">编辑</el-button>
+             <el-button link type="danger" @click="remove(scope.row.id)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
 
-    <el-dialog v-model="dialog.visible" :title="dialog.form.id ? '编辑公告' : '新增公告'">
-      <el-form :model="dialog.form" label-width="100px">
-        <el-form-item label="标题"><el-input v-model="dialog.form.title" /></el-form-item>
-        <el-form-item label="内容"><el-input type="textarea" v-model="dialog.form.content" /></el-form-item>
-        <el-form-item label="类型"><el-input v-model="dialog.form.type" /></el-form-item>
-        <el-form-item label="状态"><el-select v-model="dialog.form.status"><el-option label="已发布" value="PUBLISHED" /><el-option label="草稿" value="DRAFT" /><el-option label="下架" value="DISABLED" /></el-select></el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="dialog.visible=false">取消</el-button>
-        <el-button type="primary" @click="save">保存</el-button>
-      </template>
+    <el-dialog v-model="dialog.visible" :title="dialog.form.id ? '编辑公告' : '发布公告'" width="600px">
+       <el-form :model="dialog.form" label-width="80px">
+          <el-form-item label="标题"><el-input v-model="dialog.form.title" /></el-form-item>
+          <el-form-item label="类型">
+             <el-select v-model="dialog.form.type" style="width: 100%">
+                <el-option label="活动通知" value="活动通知" />
+                <el-option label="系统公告" value="系统公告" />
+                <el-option label="健康提示" value="健康提示" />
+             </el-select>
+          </el-form-item>
+          <el-form-item label="内容"><el-input type="textarea" :rows="6" v-model="dialog.form.content" /></el-form-item>
+          <el-form-item label="状态">
+             <el-radio-group v-model="dialog.form.status">
+                <el-radio label="PUBLISHED">立即发布</el-radio>
+                <el-radio label="DRAFT">存为草稿</el-radio>
+             </el-radio-group>
+          </el-form-item>
+       </el-form>
+       <template #footer>
+          <el-button @click="dialog.visible=false">取消</el-button>
+          <el-button type="primary" @click="save">确认</el-button>
+       </template>
     </el-dialog>
-
+    
     <el-dialog v-model="showDetail" title="公告详情">
-      <h3>{{ current.title }}</h3>
-      <p>{{ current.content }}</p>
+       <div class="detail-view">
+          <h3 class="text-center">{{ current.title }}</h3>
+          <div class="text-center text-gray-500 text-sm mb-6">{{ current.publishTime }}</div>
+          <p style="white-space: pre-line; line-height: 1.8;">{{ current.content }}</p>
+       </div>
     </el-dialog>
   </div>
 </template>
@@ -51,46 +80,41 @@
 import { reactive, ref, onMounted } from 'vue'
 import api from '../api'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Plus } from '@element-plus/icons-vue'
 
 const list = reactive({ records: [] })
-const showDetail = ref(false)
-const current = reactive({})
 const dialog = reactive({ visible: false, form: {} })
 const query = reactive({ status: '' })
+const showDetail = ref(false)
+const current = reactive({})
 
 const load = async () => {
   const res = await api.get('/announcements', { params: { status: query.status } })
-  if (res.code === 0) {
-    list.records = res.data.content
-  }
+  if (res.code === 0) list.records = res.data.content
 }
 
 const openDialog = (row = null) => {
-  dialog.visible = true
   dialog.form = row ? { ...row } : { title: '', content: '', type: '活动通知', status: 'PUBLISHED' }
+  dialog.visible = true
 }
 
 const save = async () => {
-  if (dialog.form.id) {
-    await api.put(`/announcements/${dialog.form.id}`, dialog.form)
-  } else {
-    await api.post('/announcements', dialog.form)
-  }
+  if (dialog.form.id) await api.put(`/announcements/${dialog.form.id}`, dialog.form)
+  else await api.post('/announcements', dialog.form)
   ElMessage.success('已保存')
   dialog.visible = false
+  load()
+}
+
+const remove = async (id) => {
+  await ElMessageBox.confirm('确认删除?')
+  await api.delete(`/announcements/${id}`)
   load()
 }
 
 const view = (row) => {
   Object.assign(current, row)
   showDetail.value = true
-}
-
-const remove = async (id) => {
-  await ElMessageBox.confirm('确认删除该公告吗？', '提示', { type: 'warning' })
-  await api.delete(`/announcements/${id}`)
-  ElMessage.success('已删除')
-  load()
 }
 
 onMounted(load)

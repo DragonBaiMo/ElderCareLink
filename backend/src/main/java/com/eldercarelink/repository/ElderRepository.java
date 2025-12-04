@@ -11,5 +11,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ElderRepository extends JpaRepository<Elder, Long> {
     Page<Elder> findByNameContainingAndLivingTypeContainingAndHealthLevelContainingAndStatusContaining(String name, String livingType, String healthLevel, String status, Pageable pageable);
 
-    Page<Elder> findByResponsibleVolunteerId(Long responsibleVolunteerId, Pageable pageable);
+    Page<Elder> findByResponsibleVolunteerIdAndStatusContaining(Long responsibleVolunteerId, String status, Pageable pageable);
 }
